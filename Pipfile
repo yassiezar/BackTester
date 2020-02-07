@@ -9,6 +9,7 @@ verify_ssl = true
 sqlalchemy = "*"
 sqlalchemy-utils = "*"
 sqlalchemy-ext = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
