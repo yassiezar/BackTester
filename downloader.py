@@ -3,11 +3,14 @@ import urllib.request
 
 import pandas as pd
 
+from db import Stock, StockEntry
+
 class Downloader:
 
-    def __init__(self):
+    def __init__(self, db):
         self.DEBUG = True
         self.API_KEY = '9EI4JOJQJD1WR707'
+        self.db = db
 
     def download_series(self, ticker, market, from_date=None, to_date=None):
 #        market = 'JOH'
@@ -24,7 +27,21 @@ class Downloader:
             data = data[(data['dates'] <= pd.to_datetime(to_date)) & (data['dates'] >= pd.to_datetime(from_date))]
         else:
             data = data[(data['dates'] <= pd.to_datetime(to_date))]
-        
+        return data
+
+    def download_series(self, stock, from_date=None, to_date=None):
+        if to_date is None:
+            to_date = datetime.date.today().strftime("%Y-%m-%d")
+
+        if self.DEBUG:
+            print('\nDownloading {}:{} from Alpha Vantage API'.format(stock.market, stock.ticker), end='', flush=True)
+        data = self.download_from_alpha_vantage(stock.market, stock.ticker, to_date)
+
+        if from_date is not None:
+            data = data[(data['dates'] <= pd.to_datetime(to_date)) & (data['dates'] >= pd.to_datetime(from_date))]
+        else:
+            data = data[(data['dates'] <= pd.to_datetime(to_date))]
+
         return data
 
     def download_from_alpha_vantage(self, market, ticker, date):
